@@ -95,13 +95,19 @@ public class CrawlContentIndexer {
 		//List<Document> documentsToAdd = new ArrayList<Document>();
 		Document doc = new Document();
 		String title = contentRecord.getTitle();
-		doc.add(new Field("title", title, Field.Store.YES, Field.Index.ANALYZED));  // adding title field
+		Field titleField = new Field("title", title, Field.Store.YES, Field.Index.ANALYZED);
+		titleField.setBoost(1.2f);
+		doc.add(titleField);  // adding title field
 		String content = contentRecord.getContent();
 		doc.add(new Field("content", content, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
 		String keywords = contentRecord.getMetaKeywords();
-		doc.add(new Field("keywords", keywords, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
+		Field keywordsField = new Field("keywords", keywords, Field.Store.YES, Field.Index.ANALYZED);
+		keywordsField.setBoost(1.2f);
+		doc.add(keywordsField); // adding content field
 		String description = contentRecord.getMetaDescription();
-		doc.add(new Field("description", description, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
+		Field descriptionField = new Field("description", description, Field.Store.YES, Field.Index.ANALYZED);
+		descriptionField.setBoost(1.2f);
+		doc.add(descriptionField); // adding content field
 		String url = contentRecord.getUrl();
 		doc.add(new Field("url", url, Field.Store.YES, Index.NOT_ANALYZED)); // adding content field
 		try {
@@ -209,7 +215,7 @@ public class CrawlContentIndexer {
 			 IndexSearcher is = new IndexSearcher(reader);
 			MoreLikeThis mlt = new MoreLikeThis(reader);
 			mlt.setAnalyzer(analyzer);
-			mlt.setFieldNames(new String[]{SearchIndexFields.CONTENT.fieldName});
+			mlt.setFieldNames(new String[]{SearchIndexFields.CONTENT.fieldName, SearchIndexFields.METADESCRIPTION.fieldName, SearchIndexFields.METAKEYWORDS.fieldName});
 			Query likeQuery = mlt.like(thisdoc);
 			
 			 TopDocs topDocs = is.search(likeQuery,5);
