@@ -33,6 +33,7 @@ public class HTMLParser {
 		Elements metatags = doc.select("meta[name]"); 
 		Element titleTag = doc.select("title").first();
 		String text = doc.body().text();
+		Element realContent = doc.select("div[id$=content_left]").first();
 		
 		if (titleTag!=null)
 		{
@@ -46,9 +47,9 @@ public class HTMLParser {
 		{
 		cr.setMetaKeywords(metatagKeywords.attr("content"));
 		}
-		if (text!=null)
+		if (realContent!=null)
 		{
-		cr.setContent(text);
+		cr.setContent(realContent.text());
 		}
 
 		LOGGER.debug(cr.toString());
