@@ -25,7 +25,7 @@ public class BasicCrawlControllerTest {
 			crawlController.startCrawler(urlList);
 			List<ContentRecord> resultsList  = CrawlContentIndexer.getInstance().search(searchTerm);
 			
-			LOGGER.debug("finding similar pages for the resultpages of search term '" + searchTerm + "' " + " results for nsa = " + resultsList.size());
+			LOGGER.debug("finding similar pages for the resultpages of search term '" + searchTerm + "' " + " results for " + searchTerm + " = " + resultsList.size());
 			
 			for (ContentRecord cr : resultsList)
 			{
