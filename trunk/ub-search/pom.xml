@@ -14,5 +14,24 @@
   		<artifactId>crawler4j</artifactId>
   		<version>3.5</version>
   	</dependency>
-  </dependencies>
+<dependency>
+	<groupId>org.apache.lucene</groupId>
+	<artifactId>lucene-core</artifactId>
+	<version>4.5.0</version>
+</dependency><dependency>
+	<groupId>org.apache.lucene</groupId>
+	<artifactId>lucene-analyzers</artifactId>
+	<version>3.6.2</version>
+</dependency>
+            <dependency>
+	<groupId>org.apache.lucene</groupId>
+	<artifactId>lucene-analyzers-common</artifactId>
+	<version>4.5.0</version>
+</dependency>
+            <dependency>
+	<groupId>org.apache.lucene</groupId>
+	<artifactId>lucene-queryparser</artifactId>
+	<version>4.5.0</version>
+</dependency>
+              </dependencies>
 </project>

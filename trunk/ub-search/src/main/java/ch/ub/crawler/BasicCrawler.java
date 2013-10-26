@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 
 import org.apache.http.Header;
 
+import ch.ub.indexer.CrawlContentIndexer;
+
 /**
  * @author Yasser Ganjisaffar <lastname at gmail dot com>
  */
@@ -59,6 +61,8 @@ public class BasicCrawler extends WebCrawler {
 			System.out.println("Text length: " + text.length());
 			System.out.println("Html length: " + html.length());
 			System.out.println("Number of outgoing links: " + links.size());
+			
+			CrawlContentIndexer.getInstance().indexContent(text, url);
 		}
 
 		Header[] responseHeaders = page.getFetchResponseHeaders();
@@ -71,4 +75,12 @@ public class BasicCrawler extends WebCrawler {
 		
 		System.out.println("=============");
 	}
+
+	@Override
+	public void onBeforeExit() {
+		// TODO Auto-generated method stub
+		super.onBeforeExit();
+	}
+	
+	
 }
