@@ -10,6 +10,7 @@ import org.junit.Test;
 import ch.ub.indexer.ContentRecord;
 import ch.ub.indexer.CrawlContentIndexer;
 import ch.ub.parser.HTMLParser;
+import ch.ub.service.TestServer;
 
 public class BasicCrawlControllerTest {
 
@@ -35,6 +36,14 @@ public class BasicCrawlControllerTest {
 				{
 					LOGGER.debug("similar: " + scr.getUrl() + " / " + scr.getTitle());
 				}
+			}
+			
+			TestServer testServer = new TestServer();
+			testServer.startServer();
+			LOGGER.debug("test server started");
+			while (true)
+			{
+				Thread.sleep(10000);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
