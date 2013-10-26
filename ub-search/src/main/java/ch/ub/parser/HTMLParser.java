@@ -34,7 +34,7 @@ public class HTMLParser {
 		Element titleTag = doc.select("title").first();
 		String text = doc.body().text();
 		Element realContentTitle = doc.select("#content_titel_entry").first();
-		Element realContentContent = doc.select("#content_entry").first();
+		Element realContentContent = doc.select(".content_entry").first();
 						
 		if (titleTag!=null)
 		{
