@@ -3,6 +3,11 @@
   <groupId>ub</groupId>
   <artifactId>ub-search</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <properties>
+    <jettyVersion>7.2.0.v20101020</jettyVersion>
+  </properties>
+ 
+  
   <dependencies>
   	<dependency>
   		<groupId>org.jdom</groupId>
@@ -37,6 +42,26 @@
 	<artifactId>jsoup</artifactId>
 	<version>1.7.2</version>
 </dependency>
+                <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>${jettyVersion}</version>
+    </dependency>
+                <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${jettyVersion}</version>
+    </dependency>
+            <dependency>
+	<groupId>com.sun.jersey</groupId>
+	<artifactId>jersey-server</artifactId>
+	<version>1.17.1</version>
+</dependency><dependency>
+	<groupId>com.google.collections</groupId>
+	<artifactId>google-collections</artifactId>
+	<version>1.0</version>
+</dependency>
+            
             
               </dependencies>
 </project>

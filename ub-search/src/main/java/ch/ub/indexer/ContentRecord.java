@@ -40,7 +40,7 @@ public class ContentRecord {
 	}
 	@Override
 	public String toString() {
-		return "ContentRecord [title=" + title + ", url=" + url + ", content="
+		return "ContentRecord [title=" + title + ", url=<a href=\"" + url + "\">" + title + "</a>, content="
 				+ content + ", metaKeywords=" + metaKeywords
 				+ ", metaDescription=" + metaDescription + "]";
 	} 
