@@ -62,7 +62,7 @@ public class BasicCrawler extends WebCrawler {
 			System.out.println("Html length: " + html.length());
 			System.out.println("Number of outgoing links: " + links.size());
 			
-			CrawlContentIndexer.getInstance().indexContent(text, url);
+			CrawlContentIndexer.getInstance().indexContent(html, url);
 		}
 
 		Header[] responseHeaders = page.getFetchResponseHeaders();

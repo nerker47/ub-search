@@ -2,9 +2,11 @@ package ch.ub.indexer;
 
 public class ContentRecord {
 
-	String title; 
-	String url; 
-	String content;
+	String title = ""; 
+	String url = ""; 
+	String content = "";
+	String metaKeywords = "";
+	String metaDescription = ""; 
 	
 	public String getTitle() {
 		return title;
@@ -23,6 +25,25 @@ public class ContentRecord {
 	}
 	public void setContent(String content) {
 		this.content = content;
+	}
+	public String getMetaKeywords() {
+		return metaKeywords;
+	}
+	public void setMetaKeywords(String metaKeywords) {
+		this.metaKeywords = metaKeywords;
+	}
+	public String getMetaDescription() {
+		return metaDescription;
+	}
+	public void setMetaDescription(String metaDescription) {
+		this.metaDescription = metaDescription;
+	}
+	@Override
+	public String toString() {
+		return "ContentRecord [title=" + title + ", url=" + url + ", content="
+				+ content + ", metaKeywords=" + metaKeywords
+				+ ", metaDescription=" + metaDescription + "]";
 	} 
+	
 	
 }
