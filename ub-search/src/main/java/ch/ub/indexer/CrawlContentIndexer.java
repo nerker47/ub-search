@@ -1,6 +1,10 @@
 package ch.ub.indexer;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +13,7 @@ import javax.management.StandardEmitterMBean;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
@@ -58,7 +63,21 @@ public class CrawlContentIndexer {
 	}
 	public CrawlContentIndexer() {
 		super();
-		analyzer = new StandardAnalyzer(Version.LUCENE_45); // StandardEmitterMBean(arg0, arg1, arg2) SnowballAnalyzer(Version.LUCENE_45, "German");
+		InputStream stopwordsfileIS = getClass().getResourceAsStream("/german-stopwords.txt");
+		LOGGER.debug("stopwordsfileIS=" + stopwordsfileIS);
+		StopWords stopwords = new StopWords();
+		//stopwordsfileIS.
+		BufferedReader br = new BufferedReader(new InputStreamReader(stopwordsfileIS));
+		try {
+			stopwords.read(br);
+			LOGGER.debug("stopwords size = " + stopwords.m_Words.size());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			LOGGER.debug("error");
+		}
+		CharArraySet cas = new CharArraySet(Version.LUCENE_45, stopwords.m_Words, true);
+		analyzer = new StandardAnalyzer(Version.LUCENE_45, cas); // StandardEmitterMBean(arg0, arg1, arg2) SnowballAnalyzer(Version.LUCENE_45, "German");
 		directory = new RAMDirectory();
 		conf = new IndexWriterConfig(Version.LUCENE_45, analyzer);
 		htmlParser = new HTMLParser();
