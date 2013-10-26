@@ -2,6 +2,7 @@ package ch.ub.crawler;
 
 import java.util.List;
 
+import ch.ub.indexer.CrawlContentIndexer;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -34,7 +35,7 @@ public class BasicCrawlController {
 		 * numberOfCrawlers shows the number of concurrent threads that should
 		 * be initiated for crawling.
 		 */
-		int numberOfCrawlers = 1; //Integer.parseInt(args[1]);
+		int numberOfCrawlers = 3; //Integer.parseInt(args[1]);
 
 		CrawlConfig config = new CrawlConfig();
 
@@ -56,7 +57,7 @@ public class BasicCrawlController {
 		 * You can set the maximum number of pages to crawl. The default value
 		 * is -1 for unlimited number of pages
 		 */
-		config.setMaxPagesToFetch(1);
+		config.setMaxPagesToFetch(1000);
 
 		/*
 		 * Do you need to set a proxy? If so, you can use:
@@ -102,5 +103,6 @@ public class BasicCrawlController {
 		 * will reach the line after this only when crawling is finished.
 		 */
 		controller.start(BasicCrawler.class, numberOfCrawlers);
+		CrawlContentIndexer.getInstance().setIsDoneWithIndexing();
 	}
 }
