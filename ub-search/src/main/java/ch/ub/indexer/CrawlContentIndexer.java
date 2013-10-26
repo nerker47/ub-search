@@ -112,13 +112,14 @@ public class CrawlContentIndexer {
 		} 
 	}
 	
-	public ContentRecord getContentRecordFromLuceneDoc(Document doc)
+	public ContentRecord getContentRecordFromLuceneDoc(Document doc, float score)
 	{
 		ContentRecord cr = new ContentRecord();
 		cr.setTitle(doc.get(SearchIndexFields.TITLE.fieldName));
 		cr.setUrl(doc.get(SearchIndexFields.URL.fieldName));
 		cr.setMetaDescription(doc.get(SearchIndexFields.METADESCRIPTION.fieldName));
 		cr.setMetaKeywords(doc.get(SearchIndexFields.METAKEYWORDS.fieldName));
+		cr.setScore(score);
 		
 		return cr;
 	}
@@ -149,7 +150,7 @@ public class CrawlContentIndexer {
 	      int docId = hits[i].doc;
 	      Document d = searcher.doc(docId);
 	      //System.out.println((i + 1) + ". " + d.get("url") + "\t" + d.get("title"));
-	      ContentRecord cr = getContentRecordFromLuceneDoc(d);
+	      ContentRecord cr = getContentRecordFromLuceneDoc(d, hits[i].score);
 	      resultsList.add(cr);
 	    }
 
@@ -219,7 +220,8 @@ public class CrawlContentIndexer {
 			        //the document number. (scoreDoc.doc is an int that is the
 			        //doc's id
 			        Document doc = is.doc( scoreDoc.doc );
-			        ContentRecord cr = getContentRecordFromLuceneDoc(doc);
+			        
+			        ContentRecord cr = getContentRecordFromLuceneDoc(doc, scoreDoc.score);
 			        if (!cr.getUrl().equals(url))
 			        {
 			        resultsList.add(cr);
