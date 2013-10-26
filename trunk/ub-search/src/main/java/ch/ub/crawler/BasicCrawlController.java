@@ -57,7 +57,7 @@ public class BasicCrawlController {
 		 * You can set the maximum number of pages to crawl. The default value
 		 * is -1 for unlimited number of pages
 		 */
-		config.setMaxPagesToFetch(100);
+		config.setMaxPagesToFetch(2000);
 
 		/*
 		 * Do you need to set a proxy? If so, you can use:
