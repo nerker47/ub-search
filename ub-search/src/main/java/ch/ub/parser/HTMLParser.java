@@ -38,7 +38,12 @@ public class HTMLParser {
 						
 		if (titleTag!=null)
 		{
-		cr.setTitle(titleTag.text());
+		String titlePure = titleTag.text();
+		if (titlePure.contains("|"))
+		{
+			titlePure = titlePure.substring(0, titlePure.indexOf("|")); //.subSequence(beginIndex, endIndex)
+		}
+		cr.setTitle(titlePure);
 		}
 		if (metatagDescription!=null)
 		{
