@@ -220,7 +220,10 @@ public class CrawlContentIndexer {
 			        //doc's id
 			        Document doc = is.doc( scoreDoc.doc );
 			        ContentRecord cr = getContentRecordFromLuceneDoc(doc);
+			        if (!cr.getUrl().equals(url))
+			        {
 			        resultsList.add(cr);
+			        }
 			        //Get the id that we previously stored in the document from
 			        //hibernate and parse it back to a long.
 			        //String similarUrl =  doc.get("url");
