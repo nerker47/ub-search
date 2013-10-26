@@ -7,6 +7,7 @@ public class ContentRecord {
 	String content = "";
 	String metaKeywords = "";
 	String metaDescription = ""; 
+	float score = 0;
 	
 	public String getTitle() {
 		return title;
@@ -38,9 +39,17 @@ public class ContentRecord {
 	public void setMetaDescription(String metaDescription) {
 		this.metaDescription = metaDescription;
 	}
+	
+	
+	public float getScore() {
+		return score;
+	}
+	public void setScore(float score) {
+		this.score = score;
+	}
 	@Override
 	public String toString() {
-		return "ContentRecord [title=" + title + ", url=<a href=\"" + url + "\">" + title + "</a>, content="
+		return "ContentRecord [score=" + score + ", title=" + title + ", url=<a href=\"" + url + "\">" + title + "</a>, content="
 				+ content + ", metaKeywords=" + metaKeywords
 				+ ", metaDescription=" + metaDescription + "]";
 	} 
