@@ -33,8 +33,9 @@ public class HTMLParser {
 		Elements metatags = doc.select("meta[name]"); 
 		Element titleTag = doc.select("title").first();
 		String text = doc.body().text();
-		Element realContent = doc.select("div[id$=content_left]").first();
-		
+		Element realContentTitle = doc.select("#content_titel_entry").first();
+		Element realContentContent = doc.select("#content_entry").first();
+						
 		if (titleTag!=null)
 		{
 		cr.setTitle(titleTag.text());
@@ -47,11 +48,17 @@ public class HTMLParser {
 		{
 		cr.setMetaKeywords(metatagKeywords.attr("content"));
 		}
-		if (realContent!=null)
+		String content = "";
+		if (realContentTitle!=null)
 		{
-		cr.setContent(realContent.text());
+			content += " " + realContentTitle.text();
 		}
-
+		if (realContentContent!=null)
+		{
+			content += " " + realContentContent.text();
+		}
+		cr.setContent(content);
+		
 		LOGGER.debug(cr.toString());
 		return cr; 
 	}
