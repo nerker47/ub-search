@@ -11,15 +11,23 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.queries.mlt.MoreLikeThis;
+import org.apache.lucene.queries.mlt.MoreLikeThisQuery;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
@@ -91,11 +99,11 @@ public class CrawlContentIndexer {
 		String content = contentRecord.getContent();
 		doc.add(new Field("content", content, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
 		String keywords = contentRecord.getMetaKeywords();
-		doc.add(new Field("keywords", content, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
+		doc.add(new Field("keywords", keywords, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
 		String description = contentRecord.getMetaDescription();
-		doc.add(new Field("description", content, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
+		doc.add(new Field("description", description, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
 		String url = contentRecord.getUrl();
-		doc.add(new Field("url", content, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
+		doc.add(new Field("url", url, Field.Store.YES, Index.NOT_ANALYZED)); // adding content field
 		try {
 			writer.addDocument(doc);
 		} catch (IOException e) {
@@ -104,9 +112,20 @@ public class CrawlContentIndexer {
 		} 
 	}
 	
-	int hitsPerPage = 100;
-	public void search(String querystr) throws IOException, ParseException
+	public ContentRecord getContentRecordFromLuceneDoc(Document doc)
 	{
+		ContentRecord cr = new ContentRecord();
+		cr.setTitle(doc.get(SearchIndexFields.TITLE.fieldName));
+		cr.setUrl(doc.get(SearchIndexFields.URL.fieldName));
+		cr.setMetaDescription(doc.get(SearchIndexFields.METADESCRIPTION.fieldName));
+		cr.setMetaKeywords(doc.get(SearchIndexFields.METAKEYWORDS.fieldName));
+		
+		return cr;
+	}
+	int hitsPerPage = 100;
+	public List<ContentRecord> search(String querystr) throws IOException, ParseException
+	{
+		List<ContentRecord> resultsList = new ArrayList<ContentRecord>();
 		IndexReader reader = DirectoryReader.open(directory);
 		IndexSearcher searcher = new IndexSearcher(reader);
 		
@@ -129,11 +148,89 @@ public class CrawlContentIndexer {
 	    for(int i=0;i<hits.length;++i) {
 	      int docId = hits[i].doc;
 	      Document d = searcher.doc(docId);
-	      System.out.println((i + 1) + ". " + d.get("url") + "\t" + d.get("title"));
+	      //System.out.println((i + 1) + ". " + d.get("url") + "\t" + d.get("title"));
+	      ContentRecord cr = getContentRecordFromLuceneDoc(d);
+	      resultsList.add(cr);
 	    }
 
 	    // reader can only be closed when there
 	    // is no need to access the documents any more.
 	    reader.close();	    
+	    return resultsList;
 	}
+
+	public Integer findUrlInIndex(String url) throws IOException
+	{
+		
+		TermQuery tq= new TermQuery(new Term("url", url));
+		// BooleanClauses Enum SHOULD says Use this operator for clauses that should appear in the matching documents.
+		BooleanQuery bq = new BooleanQuery();
+		bq.add(tq,Occur.SHOULD);
+		
+		IndexReader reader = DirectoryReader.open(directory);
+		IndexSearcher searcher = new IndexSearcher(reader);
+		
+		TopScoreDocCollector collector = TopScoreDocCollector.create(10, true);
+		searcher.search(bq, collector);
+		
+		 ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		   
+		    // 4. display results
+		    System.out.println("Found " + hits.length + " hits. for " + url);
+		    
+		    if (hits.length>0)
+		    {
+		    	int docId = hits[0].doc;
+		    	return docId; 
+		    }
+		    
+		    return null;
+		    
+
+	}
+	
+	
+	public List<ContentRecord> likeThis(String url) throws IOException, ParseException
+	{
+		List<ContentRecord> resultsList = new ArrayList<ContentRecord>();
+		Integer thisdoc = null;
+		try {
+		 thisdoc = findUrlInIndex(url);
+		 LOGGER.debug("found doc in index for url with id : " + thisdoc);
+		}
+		catch (IOException e)
+		{
+			LOGGER.debug("couldnt find doc in index with url = " + url);
+		}
+		if (thisdoc!=null)
+		{
+			IndexReader reader = DirectoryReader.open(directory);
+			 IndexSearcher is = new IndexSearcher(reader);
+			MoreLikeThis mlt = new MoreLikeThis(reader);
+			mlt.setAnalyzer(analyzer);
+			mlt.setFieldNames(new String[]{SearchIndexFields.CONTENT.fieldName});
+			Query likeQuery = mlt.like(thisdoc);
+			
+			 TopDocs topDocs = is.search(likeQuery,5);
+			 LOGGER.debug("topDocs hits" + topDocs.totalHits);
+			 
+			 for ( ScoreDoc scoreDoc : topDocs.scoreDocs ) {
+			        //This retrieves the actual Document from the index using
+			        //the document number. (scoreDoc.doc is an int that is the
+			        //doc's id
+			        Document doc = is.doc( scoreDoc.doc );
+			        ContentRecord cr = getContentRecordFromLuceneDoc(doc);
+			        resultsList.add(cr);
+			        //Get the id that we previously stored in the document from
+			        //hibernate and parse it back to a long.
+			        //String similarUrl =  doc.get("url");
+			        //LOGGER.debug("similar URL = " + similarUrl);
+			    }			 
+			    reader.close();	    
+		}
+		
+
+		return resultsList; 
+	}
+	
 }
