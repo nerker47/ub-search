@@ -35,9 +35,8 @@ similarpages.getSimilarPages = function(sourceUrl, divElement)
 //				alert(data.similarPages);
 				if (data.similarPages)
 				{
-					divElement.append( "<p>similar pages for " + sourceUrl + "</p>" );
 					for (var i = 0; i < data.similarPages.length; i++) {
-						divElement.append( "<p><a href=\"" + data.similarPages[i].url + "\">" + data.similarPages[i].title + "</a></p>" );
+						divElement.append( "<a  class=\"text_box_audio\" href=\"" + data.similarPages[i].url + "\">" + data.similarPages[i].title + "</a>" );
 					}				
 				}
           }
