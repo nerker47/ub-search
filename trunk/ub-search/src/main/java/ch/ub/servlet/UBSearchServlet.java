@@ -23,7 +23,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ch.ub.crawler.BasicCrawlController;
-import ch.ub.crawler.BasicCrawlControllerTest;
 import ch.ub.crawler.SitemapParser;
 import ch.ub.indexer.ContentRecord;
 import ch.ub.indexer.ContentRecordSerializer;
