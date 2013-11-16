@@ -23,6 +23,7 @@ public class BasicCrawlControllerTest {
 		BasicCrawlController crawlController = new BasicCrawlController();
 		try {
 			List<String> urlList = smParser.getSitemap();
+			urlList = urlList.subList(0, 20);
 			crawlController.startCrawler(urlList);
 			List<ContentRecord> resultsList  = CrawlContentIndexer.getInstance().search(searchTerm);
 			
