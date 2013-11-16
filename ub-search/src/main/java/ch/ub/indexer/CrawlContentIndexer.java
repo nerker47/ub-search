@@ -61,6 +61,15 @@ public class CrawlContentIndexer {
 		return cci;
 		
 	}
+
+	public static CrawlContentIndexer reload()
+	{
+
+		cci = null; 
+		return getInstance();
+		
+	}
+	
 	public CrawlContentIndexer() {
 		super();
 		InputStream stopwordsfileIS = getClass().getResourceAsStream("/german-stopwords.txt");

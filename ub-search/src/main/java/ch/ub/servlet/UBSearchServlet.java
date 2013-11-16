@@ -1,49 +1,94 @@
-package ch.ub.service;
+package ch.ub.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.util.ajax.JSON;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.stream.JsonWriter;
 
+import ch.ub.crawler.BasicCrawlController;
+import ch.ub.crawler.BasicCrawlControllerTest;
+import ch.ub.crawler.SitemapParser;
 import ch.ub.indexer.ContentRecord;
 import ch.ub.indexer.ContentRecordSerializer;
 import ch.ub.indexer.CrawlContentIndexer;
 
-public class TestServer extends AbstractHandler {
+public class UBSearchServlet extends HttpServlet {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final static Logger LOGGER = Logger.getLogger(UBSearchServlet.class.getName()); 
+
 	
-	Server server; // = new Server(8080);	
-	
-	public void handle(String target,
-            Request baseRequest,
-            HttpServletRequest request,
-            HttpServletResponse response) 
-throws IOException, ServletException
-{
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+
+		CrawlContentIndexer.reload();
+		
+		SitemapParser smParser = new SitemapParser();
+		String searchTerm = "nsa";
+		BasicCrawlController crawlController = new BasicCrawlController();
+
+			List<String> urlList = new ArrayList<String>();
+			try {
+				urlList = smParser.getSitemap();
+			} catch (IOException e) {
+				LOGGER.error("cannot load url list from sitemap", e);
+			}
+			// limit for debug
+		//	urlList = urlList.subList(0, 20);
+			try {
+				crawlController.startCrawler(urlList);
+			} catch (Exception e) {
+
+				
+				LOGGER.error("problem while crawling pages", e);
+			}
+			
+			/*
+			List<ContentRecord> resultsList  = CrawlContentIndexer.getInstance().search(searchTerm);
+			
+			LOGGER.debug("finding similar pages for the resultpages of search term '" + searchTerm + "' " + " results for " + searchTerm + " = " + resultsList.size());
+			
+			for (ContentRecord cr : resultsList)
+			{
+				LOGGER.debug("find similar pages for:" + cr.getUrl());
+				List<ContentRecord> similarResultsList = CrawlContentIndexer.getInstance().likeThis(cr.getUrl());
+				for (ContentRecord scr : similarResultsList)
+				{
+					LOGGER.debug("similar: " + scr.getUrl() + " / " + scr.getTitle());
+				}
+			}
+			*/
+		
+		super.init(config);
+	}
+
+
+	private void processRequest(ServletRequest request, ServletResponse response) throws IOException
+	{
+
 		response.setContentType("application/json;charset=utf-8");
-		response.setStatus(HttpServletResponse.SC_OK);
-		baseRequest.setHandled(true);
+		 //response.setStatus(HttpServletResponse.SC_OK);
+		//baseRequest.setHandled(true);
 		String searchString = request.getParameter("search");
 		String similarUrlString = request.getParameter("similar");
 		PrintWriter out = response.getWriter();
@@ -122,36 +167,19 @@ throws IOException, ServletException
 			response.getWriter().write(new Gson().toJson(similarPagesFor));
 			
 		}		
-//response.getWriter().println("<h1>Hello World</h1>");
-
-}
-
-	public void startServer() throws Exception
-	{
-		server = new Server(8080);
-		//server.setHandler(new TestServer());
-		
-		ResourceHandler resourcehandler = new ResourceHandler();
-		resourcehandler.setResourceBase("D:/tmp/");
-		System.out.println(resourcehandler.getResourceBase());
-		resourcehandler.setDirectoriesListed(true);
-		resourcehandler.setWelcomeFiles(new String[]{ "index.html" });
-
-		ContextHandler similarPagesContext = new ContextHandler("/sps");  
-		similarPagesContext.setHandler(new TestServer());
-		
-		ContextHandler resourcesContext = new ContextHandler("/");  
-		resourcesContext.setHandler(resourcehandler);
-		
-		//server.setHandler(resourcehandler);
-
-		HandlerList handlers = new HandlerList();
-//        handlers.setHandlers(new Handler[] { resourcehandler, new TestServer() });
-        handlers.setHandlers(new Handler[] { resourcesContext, similarPagesContext });
-              
-        server.setHandler(handlers);
-        
-		server.start();
-		server.join();
 	}
+	@Override
+	public void service(ServletRequest request, ServletResponse response)
+			throws ServletException, IOException {
+		super.service(request, response);
+	}
+
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		processRequest( req,  resp); 
+	}
+
+	
 }

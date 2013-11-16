@@ -3,7 +3,6 @@ package ch.ub.crawler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
-class SitemapParser {
+public class SitemapParser {
 	
    public List<String> getSitemap() throws IOException {
 
