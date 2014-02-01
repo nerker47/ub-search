@@ -22,7 +22,7 @@ public class BasicCrawlControllerTest {
 	public void testStartCrawler() {
 		Config config = null;
 		try {
-			config = new Config("config.properties");
+			config = new Config("testconfig.properties");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

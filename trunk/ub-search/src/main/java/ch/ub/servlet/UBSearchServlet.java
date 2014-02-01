@@ -42,12 +42,24 @@ public class UBSearchServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 
+		LOGGER.debug("init() called");
+		
 		try {
-			appConfig = new Config("config.properties");
+			appConfig = new Config("D://workspace-ub/ub-search/src/main/resources/config.properties");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+			
+		createIndex();
+		
+		super.init(config);
+	}
+
+
+	
+	private void createIndex()
+	{
 
 		CrawlContentIndexer.reload();
 		
@@ -55,19 +67,25 @@ public class UBSearchServlet extends HttpServlet {
 		appConfig.require(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
 		String siteMapUrl = appConfig.get(Config.CONFIG_PARAM_SITEMAPURL);
 		String crawlerTmpDir = appConfig.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
+		Integer numUrlsToFetch = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_URLS_TO_FETCH);
 		
 		SitemapParser smParser = new SitemapParser(siteMapUrl);
-		String searchTerm = "nsa";
+//		String searchTerm = "nsa";
 		BasicCrawlController crawlController = new BasicCrawlController(crawlerTmpDir);
 
 			List<String> urlList = new ArrayList<String>();
 			try {
 				urlList = smParser.getSitemap();
+				if (numUrlsToFetch!=null && numUrlsToFetch>0)
+				{
+				if (urlList.size()-1>numUrlsToFetch)
+					{
+					urlList = urlList.subList(0, numUrlsToFetch);
+					}
+				}
 			} catch (IOException e) {
 				LOGGER.error("cannot load url list from sitemap", e);
 			}
-			// limit for debug
-		//	urlList = urlList.subList(0, 20);
 			try {
 				crawlController.startCrawler(urlList);
 			} catch (Exception e) {
@@ -76,11 +94,8 @@ public class UBSearchServlet extends HttpServlet {
 				LOGGER.error("problem while crawling pages", e);
 			}
 			
-			
-		super.init(config);
+
 	}
-
-
 	private void processRequest(ServletRequest request, ServletResponse response) throws IOException
 	{
 
