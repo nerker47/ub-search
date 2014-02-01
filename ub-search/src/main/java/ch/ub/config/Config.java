@@ -14,6 +14,8 @@ public class Config
 	public static final String CONFIG_PARAM_SITEMAPURL = "sitemapurl";
 	public static final String CONFIG_PARAM_CRAWLER_TMP_DIR = "crawlerTmpDir";
 	public static final String CONFIG_PARAM_LIMIT_NUM_URLS_TO_FETCH = "limitNumUrlsToFetch";
+	public static final String CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS = "maxSimilarPagesResultsReturned";
+	
 	
 	
 	

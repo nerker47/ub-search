@@ -35,11 +35,16 @@ public class UBSearchServlet extends HttpServlet {
 	/**
 	 * 
 	 */
+	
+	private static boolean isReindexing = false;
+	
 	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = Logger.getLogger(UBSearchServlet.class.getName()); 
 	
 	private static Config appConfig; 
-	private static boolean  indexCreated = false; 
+	private boolean  indexCreated = false; 
+	Integer numResults;
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 
@@ -56,13 +61,20 @@ public class UBSearchServlet extends HttpServlet {
 	private void createIndex()
 	{
 
+		if (!isReindexing)
+		{
+		isReindexing = true; 
 		CrawlContentIndexer.reload();
 		
 		appConfig.require(Config.CONFIG_PARAM_SITEMAPURL);
+		appConfig.require(Config.CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS);
 		//appConfig.require(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
 		String siteMapUrl = appConfig.get(Config.CONFIG_PARAM_SITEMAPURL);
 		String crawlerTmpDir = System.getProperty("java.io.tmpdir"); //appConfig.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
 		Integer numUrlsToFetch = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_URLS_TO_FETCH);
+		numResults = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS);
+		LOGGER.debug("numResults=" + numResults);
+		
 		
 		SitemapParser smParser = new SitemapParser(siteMapUrl);
 		LOGGER.debug("siteMapUrl=" + siteMapUrl);
@@ -93,7 +105,8 @@ public class UBSearchServlet extends HttpServlet {
 				LOGGER.error("problem while crawling pages", e);
 			}
 			
-
+			isReindexing=false;
+		}
 	}
 	private void processRequest(ServletRequest request, ServletResponse response) throws IOException
 	{
@@ -145,7 +158,7 @@ public class UBSearchServlet extends HttpServlet {
 					JsonObject similarPagesFor = new JsonObject();
 
 //					out.println("Result=" + cr.getUrl() + "<br/>");
-					List<ContentRecord> crSimList = CrawlContentIndexer.getInstance().likeThis(cr.getUrl());
+					List<ContentRecord> crSimList = CrawlContentIndexer.getInstance().likeThis(cr.getUrl(),numResults);
 					
 					JsonArray resultsFor = new JsonArray();
 					
@@ -179,7 +192,7 @@ public class UBSearchServlet extends HttpServlet {
 
 			JsonArray resultsFor = new JsonArray();
 			try {
-				List<ContentRecord> crSimList = CrawlContentIndexer.getInstance().likeThis(similarUrlString);
+				List<ContentRecord> crSimList = CrawlContentIndexer.getInstance().likeThis(similarUrlString, numResults);
 				for (ContentRecord crsim : crSimList)
 				{
 					//out.println(" Similar pages=" + crsim.toString() + "<br/>");

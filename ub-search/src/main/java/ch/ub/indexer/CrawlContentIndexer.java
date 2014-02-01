@@ -217,7 +217,7 @@ public class CrawlContentIndexer {
 	}
 	
 	
-	public List<ContentRecord> likeThis(String url) throws IOException, ParseException
+	public List<ContentRecord> likeThis(String url, int maxReturnedResults) throws IOException, ParseException
 	{
 		List<ContentRecord> resultsList = new ArrayList<ContentRecord>();
 		Integer thisdoc = null;
@@ -238,7 +238,7 @@ public class CrawlContentIndexer {
 			mlt.setFieldNames(new String[]{SearchIndexFields.CONTENT.fieldName, SearchIndexFields.METADESCRIPTION.fieldName, SearchIndexFields.METAKEYWORDS.fieldName});
 			Query likeQuery = mlt.like(thisdoc);
 			
-			 TopDocs topDocs = is.search(likeQuery,5);
+			 TopDocs topDocs = is.search(likeQuery,(maxReturnedResults+1));
 			 LOGGER.debug("topDocs hits" + topDocs.totalHits);
 			 
 			 for ( ScoreDoc scoreDoc : topDocs.scoreDocs ) {
