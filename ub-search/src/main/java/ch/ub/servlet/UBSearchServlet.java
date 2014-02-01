@@ -131,6 +131,18 @@ public class UBSearchServlet extends HttpServlet {
 		String similarUrlString = request.getParameter("similar");
 		String reindexUrlString = request.getParameter("reindex");
 		String callbackString = request.getParameter("callback");
+		String resultsString = request.getParameter("results");
+		
+		if (resultsString!=null)
+		{
+			try {
+			numResults = Integer.parseInt(resultsString);
+			}
+			catch (NumberFormatException nfe)
+			{
+				LOGGER.debug("results is not a number");
+			}
+		}
 		
 		if (reindexUrlString!=null)
 		{
