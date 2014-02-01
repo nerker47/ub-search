@@ -15,7 +15,7 @@ similarpages.showSimilarPages = function(divElement)
 var sourcepage = divElement.data('forpage');
 if (sourcepage==undefined)
 {
-sourcepage=location.href;
+sourcepage=location.pathname;
 }
 //alert(sourcepage);
 
