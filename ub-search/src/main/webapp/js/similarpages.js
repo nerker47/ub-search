@@ -1,7 +1,7 @@
 
 var similarpages = {};
 
-similarpages.similarServiceBaseUrl = 'http://localhost:8080/ubsearch/ubsearch';
+similarpages.similarServiceBaseUrl = '/ubsearch/ubsearch';
 
 similarpages.initialize = function()
 {
