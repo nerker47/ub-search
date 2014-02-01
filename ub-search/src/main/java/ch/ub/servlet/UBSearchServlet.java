@@ -117,6 +117,7 @@ public class UBSearchServlet extends HttpServlet {
 		String searchString = request.getParameter("search");
 		String similarUrlString = request.getParameter("similar");
 		String reindexUrlString = request.getParameter("reindex");
+		String callbackString = request.getParameter("callback");
 		
 		if (reindexUrlString!=null)
 		{
@@ -195,7 +196,7 @@ public class UBSearchServlet extends HttpServlet {
 			JsonObject total = new JsonObject();
 			total.addProperty("total", 1);
 			mainJSONcontainer.add(total);
-			response.getWriter().write(new Gson().toJson(similarPagesFor));
+			response.getWriter().write(callbackString + "(" + new Gson().toJson(similarPagesFor) + ");");
 			
 		}		
 	}
