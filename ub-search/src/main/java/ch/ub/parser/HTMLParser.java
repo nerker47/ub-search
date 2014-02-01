@@ -1,5 +1,10 @@
 package ch.ub.parser;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +24,20 @@ public class HTMLParser {
 	public ContentRecord parse(String html, String url)
 	{
 		ContentRecord cr = new ContentRecord();
+		
+		LOGGER.debug("setting url original =" + url);
+
+			URI origUrl;
+			try {
+				origUrl = new URI(url);
+				url = origUrl.getPath();
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			LOGGER.debug("setting url reduced to path =" + url);
+
 		cr.setUrl(url);
 
 		

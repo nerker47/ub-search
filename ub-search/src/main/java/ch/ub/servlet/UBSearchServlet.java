@@ -43,7 +43,9 @@ public class UBSearchServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 
 		LOGGER.debug("init() called");
+		LOGGER.debug("init() called");
 		
+		 
 		try {
 			appConfig = new Config("D://workspace-ub/ub-search/src/main/resources/config.properties");
 		} catch (IOException e1) {

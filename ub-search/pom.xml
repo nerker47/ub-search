@@ -85,6 +85,15 @@
 	<artifactId>jsoup</artifactId>
 	<version>1.7.2</version>
 </dependency>
+<dependency>
+	<groupId>javax.servlet</groupId>
+	<artifactId>servlet-api</artifactId>
+	<version>2.5</version>
+	 <scope>provided</scope>
+</dependency>
+            
+<!-- 
+
                 <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
@@ -97,11 +106,9 @@
       <version>${jettyVersion}</version>
       <scope>compile</scope>
     </dependency>
-            <dependency>
-	<groupId>com.sun.jersey</groupId>
-	<artifactId>jersey-server</artifactId>
-	<version>1.17.1</version>
-</dependency><dependency>
+    -->
+
+<dependency>
 	<groupId>com.google.collections</groupId>
 	<artifactId>google-collections</artifactId>
 	<version>1.0</version>
