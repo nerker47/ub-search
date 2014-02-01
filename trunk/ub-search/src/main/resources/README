@@ -1,6 +1,6 @@
 
 # creates war
-mvn war:war
+mvn clean compile war:war
 
 
 # starts ubsearch context in jetty out of ide
@@ -10,9 +10,18 @@ mvn jetty:run
 
 on the server where the servlet is running, the foollowing requests shoudl return some results: 
 
+search
+=======
+
 /ubsearch/ubsearch?search=xyz
 or 
 http://localhost:8080/ubsearch/ubsearch?search=xyz
-
 gives JSON results for the specified search term
+
+
+similar
+========
+/ubsearch/ubsearch?similar=<path of page to which the results should be similar>
+example: 
+http://localhost:8080/ubsearch/ubsearch?similar=/archiv/ausgabe1/lx_6.html
 
