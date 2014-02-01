@@ -65,6 +65,7 @@ public class BasicCrawler extends WebCrawler {
 			CrawlContentIndexer.getInstance().indexContent(html, url);
 		}
 
+		/*
 		Header[] responseHeaders = page.getFetchResponseHeaders();
 		if (responseHeaders != null) {
 			System.out.println("Response headers:");
@@ -72,6 +73,7 @@ public class BasicCrawler extends WebCrawler {
 				System.out.println("\t" + header.getName() + ": " + header.getValue());
 			}
 		}
+		*/
 		
 		System.out.println("=============");
 	}
