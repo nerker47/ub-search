@@ -19,6 +19,7 @@ public class BasicCrawlControllerTest {
 
 	@Test
 	public void testStartCrawler() {
+		CrawlContentIndexer cci = new CrawlContentIndexer();
 		Config config = null;
 		try {
 			config = new Config("testconfig.properties");
@@ -36,14 +37,14 @@ public class BasicCrawlControllerTest {
 			// limit for debug
 //			urlList = urlList.subList(0, 20);
 			crawlController.startCrawler(urlList);
-			List<ContentRecord> resultsList  = CrawlContentIndexer.getInstance().search(searchTerm);
+			List<ContentRecord> resultsList  = cci.search(searchTerm);
 			
 			LOGGER.debug("finding similar pages for the resultpages of search term '" + searchTerm + "' " + " results for " + searchTerm + " = " + resultsList.size());
 			
 			for (ContentRecord cr : resultsList)
 			{
 				LOGGER.debug("find similar pages for:" + cr.getUrl());
-				List<ContentRecord> similarResultsList = CrawlContentIndexer.getInstance().likeThis(cr.getUrl());
+				List<ContentRecord> similarResultsList = cci.likeThis(cr.getUrl());
 				for (ContentRecord scr : similarResultsList)
 				{
 					LOGGER.debug("similar: " + scr.getUrl() + " / " + scr.getTitle());

@@ -43,6 +43,7 @@ public class BasicCrawlController {
 
 		CrawlConfig config = new CrawlConfig();
 
+		config.setResumableCrawling(false);
 		config.setCrawlStorageFolder(crawlStorageFolder);
 
 		/*

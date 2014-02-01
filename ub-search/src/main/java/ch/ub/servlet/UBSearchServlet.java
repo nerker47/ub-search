@@ -1,5 +1,6 @@
 package ch.ub.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -64,12 +65,16 @@ public class UBSearchServlet extends HttpServlet {
 		Integer numUrlsToFetch = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_URLS_TO_FETCH);
 		
 		SitemapParser smParser = new SitemapParser(siteMapUrl);
+		LOGGER.debug("siteMapUrl=" + siteMapUrl);
+		LOGGER.debug("smParser=" + smParser);
 //		String searchTerm = "nsa";
+		crawlerTmpDir = crawlerTmpDir + File.pathSeparatorChar + "ubsearch" + System.currentTimeMillis();
 		BasicCrawlController crawlController = new BasicCrawlController(crawlerTmpDir);
 
 			List<String> urlList = new ArrayList<String>();
 			try {
 				urlList = smParser.getSitemap();
+				LOGGER.debug("urlList.size =" + urlList.size());
 				if (numUrlsToFetch!=null && numUrlsToFetch>0)
 				{
 				if (urlList.size()-1>numUrlsToFetch)
@@ -111,6 +116,12 @@ public class UBSearchServlet extends HttpServlet {
 		//baseRequest.setHandled(true);
 		String searchString = request.getParameter("search");
 		String similarUrlString = request.getParameter("similar");
+		String reindexUrlString = request.getParameter("reindex");
+		
+		if (reindexUrlString!=null)
+		{
+			createIndex();
+		}
 		PrintWriter out = response.getWriter();
 
 		//Gson gson = new Gson();
