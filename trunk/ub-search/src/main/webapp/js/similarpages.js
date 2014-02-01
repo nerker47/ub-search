@@ -40,15 +40,16 @@ $(document).ready(function () {
  
  if (x!=undefined)
         {
-	 var sourcepage = x.data('forpage');
-	 if (sourcepage==undefined)
-	 {
-	 sourcepage=location.pathname;
-	 }	 
+	 
+		 var sourcepage = x.data('forpage');
+		 if (sourcepage==undefined)
+		 {
+		 sourcepage=location.pathname;
+		 }	 
 
         $.ajax({
             type: 'GET',
-            url: 'http://similar.untergrund-blättle.ch/ubsearch/ubsearch?similar=/archiv/ausgabe2/jugendkriminalitaet.html&callback=rendersimilarlinks&this=mine',
+            url: similarpages.similarServiceBaseUrl + '?similar=' + sourcepage + '&callback=rendersimilarlinks',
             dataType: 'jsonp'
         });
 
