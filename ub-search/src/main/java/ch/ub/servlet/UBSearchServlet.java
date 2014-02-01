@@ -22,6 +22,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import ch.ub.config.Config;
 import ch.ub.crawler.BasicCrawlController;
 import ch.ub.crawler.SitemapParser;
 import ch.ub.indexer.ContentRecord;
@@ -35,16 +36,29 @@ public class UBSearchServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = Logger.getLogger(UBSearchServlet.class.getName()); 
-
+	
+	private static Config appConfig; 
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 
+		try {
+			appConfig = new Config("config.properties");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		CrawlContentIndexer.reload();
 		
-		SitemapParser smParser = new SitemapParser();
+		appConfig.require(Config.CONFIG_PARAM_SITEMAPURL);
+		appConfig.require(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
+		String siteMapUrl = appConfig.get(Config.CONFIG_PARAM_SITEMAPURL);
+		String crawlerTmpDir = appConfig.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
+		
+		SitemapParser smParser = new SitemapParser(siteMapUrl);
 		String searchTerm = "nsa";
-		BasicCrawlController crawlController = new BasicCrawlController();
+		BasicCrawlController crawlController = new BasicCrawlController(crawlerTmpDir);
 
 			List<String> urlList = new ArrayList<String>();
 			try {
@@ -62,22 +76,7 @@ public class UBSearchServlet extends HttpServlet {
 				LOGGER.error("problem while crawling pages", e);
 			}
 			
-			/*
-			List<ContentRecord> resultsList  = CrawlContentIndexer.getInstance().search(searchTerm);
 			
-			LOGGER.debug("finding similar pages for the resultpages of search term '" + searchTerm + "' " + " results for " + searchTerm + " = " + resultsList.size());
-			
-			for (ContentRecord cr : resultsList)
-			{
-				LOGGER.debug("find similar pages for:" + cr.getUrl());
-				List<ContentRecord> similarResultsList = CrawlContentIndexer.getInstance().likeThis(cr.getUrl());
-				for (ContentRecord scr : similarResultsList)
-				{
-					LOGGER.debug("similar: " + scr.getUrl() + " / " + scr.getTitle());
-				}
-			}
-			*/
-		
 		super.init(config);
 	}
 

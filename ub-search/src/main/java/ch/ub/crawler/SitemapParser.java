@@ -14,11 +14,19 @@ import org.jdom2.input.SAXBuilder;
 
 public class SitemapParser {
 	
-   public List<String> getSitemap() throws IOException {
+
+	final String sitemapUrl; 
+	
+   public SitemapParser(String sitemapUrl) {
+		super();
+		this.sitemapUrl = sitemapUrl;
+	}
+
+public List<String> getSitemap() throws IOException {
 
 	   List<String> urlList = new ArrayList<String>();
-       String str = "http://www.xn--untergrund-blttle-2qb.ch/sitemap.xml";
-       URL url = new URL(str);
+      // String str = "http://www.xn--untergrund-blttle-2qb.ch/sitemap.xml";
+       URL url = new URL(sitemapUrl);
        InputStream is = url.openStream();
        int ptr = 0;
        StringBuilder builder = new StringBuilder();

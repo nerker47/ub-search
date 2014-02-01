@@ -2,11 +2,13 @@ package ch.ub.crawler;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
+import ch.ub.config.Config;
 import ch.ub.indexer.ContentRecord;
 import ch.ub.indexer.CrawlContentIndexer;
 import ch.ub.parser.HTMLParser;
@@ -18,9 +20,18 @@ public class BasicCrawlControllerTest {
 
 	@Test
 	public void testStartCrawler() {
-		SitemapParser smParser = new SitemapParser();
+		Config config = null;
+		try {
+			config = new Config("config.properties");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String sitempaurl = config.get(Config.CONFIG_PARAM_SITEMAPURL);
+		String crawlertmpdir = config.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
+		SitemapParser smParser = new SitemapParser(sitempaurl);
 		String searchTerm = "nsa";
-		BasicCrawlController crawlController = new BasicCrawlController();
+		BasicCrawlController crawlController = new BasicCrawlController(crawlertmpdir);
 		try {
 			List<String> urlList = smParser.getSitemap();
 			// limit for debug
