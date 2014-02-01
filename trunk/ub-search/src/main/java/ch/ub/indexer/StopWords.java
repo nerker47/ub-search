@@ -27,6 +27,10 @@ import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.util.Version;
 
 /**
+ * Stopwords reader and List provider,
+ * supplied to lucene
+ * 
+ * 
  * Class that can test whether a given string is a stop word. Lowercases all
  * words before the test. <p/> The format for reading and writing is one word
  * per line, lines starting with '#' are interpreted as comments and therefore
