@@ -1,10 +1,13 @@
 package ch.ub.config;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+
+import javax.servlet.ServletContext;
 
 public class Config
 {
@@ -17,13 +20,25 @@ public class Config
     private Properties props;
 
     public Config(String file_name)
-        throws java.io.IOException
-    {
-        props = new Properties();
+            throws java.io.IOException
+        {
+            props = new Properties();
 
-        props.load(new FileInputStream(file_name));
-    }
+            props.load(new FileInputStream(file_name));
+        }
+    
+    public Config(String file_name, ServletContext context)
+            throws java.io.IOException
+        {
+            props = new Properties();
+            InputStream inp = context.getResourceAsStream(file_name);
+            props.load(inp);
+        }
 
+    
+    
+    
+    
     public void require(String key)
     {
         if (!props.containsKey(key))

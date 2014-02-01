@@ -38,7 +38,7 @@ public class UBSearchServlet extends HttpServlet {
 	private final static Logger LOGGER = Logger.getLogger(UBSearchServlet.class.getName()); 
 	
 	private static Config appConfig; 
-	
+	private static boolean  indexCreated = false; 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 
@@ -46,15 +46,7 @@ public class UBSearchServlet extends HttpServlet {
 		LOGGER.debug("init() called");
 		
 		 
-		try {
-			appConfig = new Config("D://workspace-ub/ub-search/src/main/resources/config.properties");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-			
-		createIndex();
-		
+
 		super.init(config);
 	}
 
@@ -66,9 +58,9 @@ public class UBSearchServlet extends HttpServlet {
 		CrawlContentIndexer.reload();
 		
 		appConfig.require(Config.CONFIG_PARAM_SITEMAPURL);
-		appConfig.require(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
+		//appConfig.require(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
 		String siteMapUrl = appConfig.get(Config.CONFIG_PARAM_SITEMAPURL);
-		String crawlerTmpDir = appConfig.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
+		String crawlerTmpDir = System.getProperty("java.io.tmpdir"); //appConfig.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
 		Integer numUrlsToFetch = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_URLS_TO_FETCH);
 		
 		SitemapParser smParser = new SitemapParser(siteMapUrl);
@@ -101,6 +93,19 @@ public class UBSearchServlet extends HttpServlet {
 	private void processRequest(ServletRequest request, ServletResponse response) throws IOException
 	{
 
+		if (!indexCreated)
+		{
+			try {
+				appConfig = new Config("/WEB-INF/config.properties", getServletContext());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+				
+			createIndex();
+			indexCreated=true; 
+			
+		}
 		response.setContentType("application/json;charset=utf-8");
 		 //response.setStatus(HttpServletResponse.SC_OK);
 		//baseRequest.setHandled(true);
