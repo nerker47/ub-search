@@ -1,6 +1,7 @@
 var similarpages = {};
 
 similarpages.similarServiceBaseUrl = 'http://192.168.0.34/ubsearch/ubsearch';
+similarpages.minSimilarityscore=0.05;
 
 
 similarpages.showSimilarPages = function(divElement)
@@ -19,7 +20,6 @@ similarpages.getSimilarPages(sourcepage, divElement);
 
 
 
-
 rendersimilarlinks = function(data)
         {
         $( ".similarpages" ).each(function( index ) {
@@ -27,7 +27,10 @@ rendersimilarlinks = function(data)
         {
             for (var i = 0; i < data.similarPages.length; i++)
                 {
-                $( this ).append( "<a  class=\"text_box_audio\" href=\"" + data.similarPages[i].url + "\">" + data.similarPages[i].title + "</a>" );
+            	if (data.similarPages[i].similarityscore>=similarpages.minSimilarityscore)
+            		{
+            		$( this ).append( "<a  class=\"text_box_audio\" href=\"" + data.similarPages[i].url + "\">" + data.similarPages[i].title + "</a>" );
+            		}
                 }
         }
         });
@@ -45,7 +48,7 @@ $(document).ready(function () {
 		 if (sourcepage==undefined)
 		 {
 		 sourcepage=location.pathname;
-		 sourcepage.replace(/\.php/g, ".html")
+		 sourcepage=sourcepage.replace(/\.php/g, ".html")
 		 }	 
 
         $.ajax({
