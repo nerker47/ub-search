@@ -45,6 +45,7 @@ $(document).ready(function () {
 		 if (sourcepage==undefined)
 		 {
 		 sourcepage=location.pathname;
+		 sourcepage.replace(/\.php/g, ".html")
 		 }	 
 
         $.ajax({
