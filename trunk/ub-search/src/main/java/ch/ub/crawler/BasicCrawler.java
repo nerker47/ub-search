@@ -44,13 +44,13 @@ public class BasicCrawler extends WebCrawler {
 		String parentUrl = page.getWebURL().getParentUrl();
 		String anchor = page.getWebURL().getAnchor();
 
-		System.out.println("Docid: " + docid);
+//		System.out.println("Docid: " + docid);
 		System.out.println("URL: " + url);
-		System.out.println("Domain: '" + domain + "'");
-		System.out.println("Sub-domain: '" + subDomain + "'");
-		System.out.println("Path: '" + path + "'");
-		System.out.println("Parent page: " + parentUrl);
-		System.out.println("Anchor text: " + anchor);
+//		System.out.println("Domain: '" + domain + "'");
+//		System.out.println("Sub-domain: '" + subDomain + "'");
+//		System.out.println("Path: '" + path + "'");
+//		System.out.println("Parent page: " + parentUrl);
+//		System.out.println("Anchor text: " + anchor);
 		
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
@@ -58,9 +58,9 @@ public class BasicCrawler extends WebCrawler {
 			String html = htmlParseData.getHtml();
 			List<WebURL> links = htmlParseData.getOutgoingUrls();
 
-			System.out.println("Text length: " + text.length());
-			System.out.println("Html length: " + html.length());
-			System.out.println("Number of outgoing links: " + links.size());
+	//		System.out.println("Text length: " + text.length());
+	//		System.out.println("Html length: " + html.length());
+	//		System.out.println("Number of outgoing links: " + links.size());
 			
 			CrawlContentIndexer.getInstance().indexContent(html, url);
 		}
@@ -75,7 +75,7 @@ public class BasicCrawler extends WebCrawler {
 		}
 		*/
 		
-		System.out.println("=============");
+	//	System.out.println("=============");
 	}
 
 	@Override

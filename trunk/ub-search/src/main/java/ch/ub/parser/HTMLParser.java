@@ -25,7 +25,7 @@ public class HTMLParser {
 	{
 		ContentRecord cr = new ContentRecord();
 		
-		LOGGER.debug("setting url original =" + url);
+//		LOGGER.debug("setting url original =" + url);
 
 			URI origUrl;
 			try {
@@ -36,7 +36,7 @@ public class HTMLParser {
 				e.printStackTrace();
 			}
 
-			LOGGER.debug("setting url reduced to path =" + url);
+//			LOGGER.debug("setting url reduced to path =" + url);
 
 		cr.setUrl(url);
 
@@ -79,7 +79,7 @@ public class HTMLParser {
 		}
 		cr.setContent(content);
 		
-		LOGGER.debug(cr.toString());
+		//LOGGER.debug(cr.toString());
 		return cr; 
 	}
 }
