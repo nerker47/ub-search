@@ -1,5 +1,9 @@
 package ch.ub.indexer;
 
+/*
+ * Enumeration containing names of fields
+ * 
+ */
 public enum SearchIndexFields {
 
 	TITLE("title"),

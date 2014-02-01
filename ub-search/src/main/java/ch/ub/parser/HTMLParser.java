@@ -8,8 +8,13 @@ import org.jsoup.select.Elements;
 
 import ch.ub.indexer.ContentRecord;
 
+/*
+ * custom HTML parser transferring data parsed from page into data object
+ * 
+ */
 public class HTMLParser {
 
+	
 	private final static Logger LOGGER = Logger.getLogger(HTMLParser.class.getName()); 
 	public ContentRecord parse(String html, String url)
 	{
@@ -18,15 +23,6 @@ public class HTMLParser {
 
 		
 		Document doc = Jsoup.parse(html);
-		/*
-		 * <title>48° 8' N, 11° 34' O - Sabina Lorenz | Lyrik | Untergrund-Blättle</title>
-	  
-	  
-      <meta name="description" content="Eine Glastür ist eine Glastür, deshalb darf das Kind sie auch nicht anfassen, wenn die Mutter saugt, spült und wischt.">
-	  
-      <meta name="keywords" content="Untergrund-Blättle, Untergrund, Gesellschaft, Gedichte, 48° 8' N, 11° 34' O, Sabina Lorenz, Prosa, Lyrik, Subkultur, Gegenkultur">
-	  
-		 */
 		
 		Element metatagKeywords = doc.select("meta[name$=keywords]").first(); 
 		Element metatagDescription = doc.select("meta[name$=description]").first(); 		

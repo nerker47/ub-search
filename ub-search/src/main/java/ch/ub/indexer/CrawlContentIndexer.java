@@ -1,14 +1,11 @@
 package ch.ub.indexer;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.management.StandardEmitterMBean;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -23,7 +20,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.mlt.MoreLikeThis;
-import org.apache.lucene.queries.mlt.MoreLikeThisQuery;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -111,10 +107,6 @@ public class CrawlContentIndexer {
 	public void indexContent(String html, String url)
 	{
 		ContentRecord cr = htmlParser.parse( html, url);
-//		ContentRecord cr = new ContentRecord();
-//		cr.setTitle("");
-//		cr.setContent(content);
-//		cr.setUrl(url);
 		addDocument(cr);
 	}
 	
