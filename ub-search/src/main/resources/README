@@ -1,0 +1,18 @@
+
+# creates war
+mvn war:war
+
+
+# starts ubsearch context in jetty out of ide
+mvn jetty:run
+
+
+
+on the server where the servlet is running, the foollowing requests shoudl return some results: 
+
+/ubsearch/ubsearch?search=xyz
+or 
+http://localhost:8080/ubsearch/ubsearch?search=xyz
+
+gives JSON results for the specified search term
+
