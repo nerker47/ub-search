@@ -44,7 +44,7 @@ public class BasicCrawlControllerTest {
 			for (ContentRecord cr : resultsList)
 			{
 				LOGGER.debug("find similar pages for:" + cr.getUrl());
-				List<ContentRecord> similarResultsList = cci.likeThis(cr.getUrl());
+				List<ContentRecord> similarResultsList = cci.likeThis(cr.getUrl(),1000);
 				for (ContentRecord scr : similarResultsList)
 				{
 					LOGGER.debug("similar: " + scr.getUrl() + " / " + scr.getTitle());
