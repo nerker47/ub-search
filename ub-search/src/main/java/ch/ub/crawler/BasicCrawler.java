@@ -10,7 +10,9 @@ import java.util.regex.Pattern;
 
 import org.apache.http.Header;
 
-import ch.ub.indexer.CrawlContentIndexer;
+import ch.ub.indexer.IndexHolder;
+import ch.ub.parser.HTMLParser;
+import ch.ub.util.IndexerUtil;
 
 /**
  * @author Yasser Ganjisaffar <lastname at gmail dot com>
@@ -61,8 +63,11 @@ public class BasicCrawler extends WebCrawler {
 	//		System.out.println("Text length: " + text.length());
 	//		System.out.println("Html length: " + html.length());
 	//		System.out.println("Number of outgoing links: " + links.size());
-			
-			CrawlContentIndexer.getInstance().indexContent(html, url);
+
+			IndexHolder indexHolder = BasicCrawlController.getCurrentInstance().getIndexHolder();
+
+			//CrawlContentIndexer.getInstance().indexContent(html, url);
+			IndexerUtil.indexContent(indexHolder, html,  url);
 		}
 
 		/*

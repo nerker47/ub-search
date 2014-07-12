@@ -28,7 +28,8 @@ import ch.ub.crawler.BasicCrawlController;
 import ch.ub.crawler.SitemapParser;
 import ch.ub.indexer.ContentRecord;
 import ch.ub.indexer.ContentRecordSerializer;
-import ch.ub.indexer.CrawlContentIndexer;
+import ch.ub.indexer.IndexHolder;
+import ch.ub.util.IndexResultsRetrieverUtil;
 
 public class UBSearchServlet extends HttpServlet {
 
@@ -45,9 +46,13 @@ public class UBSearchServlet extends HttpServlet {
 	private boolean  indexCreated = false; 
 	Integer numResults;
 	
+	IndexHolder indexHolder;
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 
+		indexHolder = new IndexHolder();
+		
 		LOGGER.debug("init() called");
 		LOGGER.debug("init() called");
 		
@@ -61,57 +66,69 @@ public class UBSearchServlet extends HttpServlet {
 	private void createIndex()
 	{
 
-		if (!isReindexing)
-		{
-		isReindexing = true; 
-		CrawlContentIndexer.reload();
+		Reindexer reindexer = new Reindexer(this);
+		Thread t = new Thread(reindexer);
+		t.start();
 		
-		appConfig.require(Config.CONFIG_PARAM_SITEMAPURL);
-		appConfig.require(Config.CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS);
-		//appConfig.require(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
-		String siteMapUrl = appConfig.get(Config.CONFIG_PARAM_SITEMAPURL);
-		String crawlerTmpDir = System.getProperty("java.io.tmpdir"); //appConfig.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
-		Integer numUrlsToFetch = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_URLS_TO_FETCH);
-		numResults = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS);
-		LOGGER.debug("numResults=" + numResults);
-		
-		
-		SitemapParser smParser = new SitemapParser(siteMapUrl);
-		LOGGER.debug("siteMapUrl=" + siteMapUrl);
-		LOGGER.debug("smParser=" + smParser);
-//		String searchTerm = "nsa";
-		crawlerTmpDir = crawlerTmpDir + File.pathSeparatorChar + "ubsearch" + System.currentTimeMillis();
-		BasicCrawlController crawlController = new BasicCrawlController(crawlerTmpDir);
-
-			List<String> urlList = new ArrayList<String>();
-			try {
-				urlList = smParser.getSitemap();
-				LOGGER.debug("urlList.size =" + urlList.size());
-				if (numUrlsToFetch!=null && numUrlsToFetch>0)
-				{
-				if (urlList.size()-1>numUrlsToFetch)
-					{
-					urlList = urlList.subList(0, numUrlsToFetch);
-					}
-				}
-			} catch (IOException e) {
-				LOGGER.error("cannot load url list from sitemap", e);
-			}
-			try {
-				crawlController.startCrawler(urlList);
-			} catch (Exception e) {
-
-				
-				LOGGER.error("problem while crawling pages", e);
-			}
-			
-			isReindexing=false;
-		}
+//		if (!isReindexing)
+//		{
+//		isReindexing = true; 
+//		
+//		
+//		
+////		CrawlContentIndexer.reload(indexHolder);
+//		
+//		appConfig.require(Config.CONFIG_PARAM_SITEMAPURL);
+//		appConfig.require(Config.CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS);
+//		//appConfig.require(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
+//		String siteMapUrl = appConfig.get(Config.CONFIG_PARAM_SITEMAPURL);
+//		String crawlerTmpDir = System.getProperty("java.io.tmpdir"); //appConfig.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
+//		Integer numUrlsToFetch = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_URLS_TO_FETCH);
+//		numResults = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS);
+//		LOGGER.debug("numResults=" + numResults);
+//		
+//		
+//		SitemapParser smParser = new SitemapParser(siteMapUrl);
+//		LOGGER.debug("siteMapUrl=" + siteMapUrl);
+//		LOGGER.debug("smParser=" + smParser);
+////		String searchTerm = "nsa";
+//		crawlerTmpDir = crawlerTmpDir + File.pathSeparatorChar + "ubsearch" + System.currentTimeMillis();
+//		
+//		IndexHolder newIndexHolder = new IndexHolder();
+//		BasicCrawlController crawlController = BasicCrawlController.createNewInstance(newIndexHolder, crawlerTmpDir);
+//		
+////		BasicCrawlController crawlController = new BasicCrawlController(crawlerTmpDir);
+//
+//			List<String> urlList = new ArrayList<String>();
+//			try {
+//				urlList = smParser.getSitemap();
+//				LOGGER.debug("urlList.size =" + urlList.size());
+//				if (numUrlsToFetch!=null && numUrlsToFetch>0)
+//				{
+//				if (urlList.size()-1>numUrlsToFetch)
+//					{
+//					urlList = urlList.subList(0, numUrlsToFetch);
+//					}
+//				}
+//			} catch (IOException e) {
+//				LOGGER.error("cannot load url list from sitemap", e);
+//			}
+//			try {
+//				crawlController.startCrawler(urlList);
+//			} catch (Exception e) {
+//
+//				
+//				LOGGER.error("problem while crawling pages", e);
+//			}
+//			
+//			indexHolder = newIndexHolder; 
+//			isReindexing=false;
+//		}
 	}
 	private void processRequest(ServletRequest request, ServletResponse response) throws IOException
 	{
 
-		if (!indexCreated)
+		if (!isIndexCreated())
 		{
 			try {
 				appConfig = new Config("/WEB-INF/config.properties", getServletContext());
@@ -121,7 +138,7 @@ public class UBSearchServlet extends HttpServlet {
 			}
 				
 			createIndex();
-			indexCreated=true; 
+			//indexCreated=true; 
 			
 		}
 		response.setContentType("application/json;charset=utf-8");
@@ -133,7 +150,7 @@ public class UBSearchServlet extends HttpServlet {
 		String callbackString = request.getParameter("callback");
 		String resultsString = request.getParameter("results");
 		
-		if (resultsString!=null)
+		if (resultsString!=null && isIndexCreated())
 		{
 			try {
 			numResults = Integer.parseInt(resultsString);
@@ -144,6 +161,7 @@ public class UBSearchServlet extends HttpServlet {
 			}
 		}
 		
+		// got call to start reindexing
 		if (reindexUrlString!=null)
 		{
 			createIndex();
@@ -160,18 +178,18 @@ public class UBSearchServlet extends HttpServlet {
 
 		JsonArray mainJSONcontainer = new JsonArray();
 		int numSearchResults = 0;
-		if (searchString!=null)
+		if (searchString!=null && isIndexCreated())
 		{
 			try {
-				List<ContentRecord> crList = CrawlContentIndexer.getInstance().search(searchString);
+				//List<ContentRecord> crList = CrawlContentIndexer.getInstance().search(searchString);
+				List<ContentRecord> crList = IndexResultsRetrieverUtil.search(indexHolder.getDirectory(), indexHolder.getAnalyzer(), searchString, 100);
 				numSearchResults = crList.size();
 				for (ContentRecord cr : crList)
 				{
 					JsonObject similarPagesFor = new JsonObject();
 
-//					out.println("Result=" + cr.getUrl() + "<br/>");
-					List<ContentRecord> crSimList = CrawlContentIndexer.getInstance().likeThis(cr.getUrl(),numResults);
-					
+					List<ContentRecord> crSimList = IndexResultsRetrieverUtil.likeThis(indexHolder.getDirectory(),indexHolder.getAnalyzer(),   cr.getUrl(),numResults);
+					 
 					JsonArray resultsFor = new JsonArray();
 					
 					for (ContentRecord crsim : crSimList)
@@ -198,13 +216,15 @@ public class UBSearchServlet extends HttpServlet {
 		
 		
 		
-		if (similarUrlString!=null)
+		if (similarUrlString!=null&& isIndexCreated())
 		{
 			JsonObject similarPagesFor = new JsonObject();
 
 			JsonArray resultsFor = new JsonArray();
 			try {
-				List<ContentRecord> crSimList = CrawlContentIndexer.getInstance().likeThis(similarUrlString, numResults);
+				//List<ContentRecord> crSimList = CrawlContentIndexer.getInstance().likeThis(similarUrlString, numResults);
+				List<ContentRecord> crSimList = IndexResultsRetrieverUtil.likeThis(indexHolder.getDirectory(),indexHolder.getAnalyzer(),   similarUrlString,numResults);
+
 				for (ContentRecord crsim : crSimList)
 				{
 					//out.println(" Similar pages=" + crsim.toString() + "<br/>");
@@ -238,5 +258,48 @@ public class UBSearchServlet extends HttpServlet {
 		processRequest( req,  resp); 
 	}
 
+
+
+	public static boolean isReindexing() {
+		return isReindexing;
+	}
+
+
+
+	public static void setReindexing(boolean isReindexing) {
+		UBSearchServlet.isReindexing = isReindexing;
+	}
+
+
+
+	public static Config getAppConfig() {
+		return appConfig;
+	}
+
+
+
+	public IndexHolder getIndexHolder() {
+		return indexHolder;
+	}
+
+
+
+	public void setIndexHolder(IndexHolder indexHolder) {
+		this.indexHolder = indexHolder;
+	}
+
+
+
+	public boolean isIndexCreated() {
+		return indexCreated;
+	}
+
+
+
+	public void setIndexCreated(boolean indexCreated) {
+		this.indexCreated = indexCreated;
+	}
+
+	
 	
 }

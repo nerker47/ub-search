@@ -10,8 +10,10 @@ import org.junit.Test;
 
 import ch.ub.config.Config;
 import ch.ub.indexer.ContentRecord;
-import ch.ub.indexer.CrawlContentIndexer;
+import ch.ub.indexer.IndexHolder;
 import ch.ub.parser.HTMLParser;
+import ch.ub.util.IndexResultsRetrieverUtil;
+import ch.ub.util.IndexerUtil;
 
 public class BasicCrawlControllerTest {
 
@@ -19,7 +21,8 @@ public class BasicCrawlControllerTest {
 
 	@Test
 	public void testStartCrawler() {
-		CrawlContentIndexer cci = new CrawlContentIndexer();
+		IndexHolder indexHolder = new IndexHolder();
+
 		Config config = null;
 		try {
 			config = new Config("testconfig.properties");
@@ -31,20 +34,20 @@ public class BasicCrawlControllerTest {
 		String crawlertmpdir = config.get(Config.CONFIG_PARAM_CRAWLER_TMP_DIR);
 		SitemapParser smParser = new SitemapParser(sitempaurl);
 		String searchTerm = "nsa";
-		BasicCrawlController crawlController = new BasicCrawlController(crawlertmpdir);
+		BasicCrawlController crawlController = BasicCrawlController.createNewInstance(indexHolder, crawlertmpdir);
 		try {
 			List<String> urlList = smParser.getSitemap();
 			// limit for debug
 //			urlList = urlList.subList(0, 20);
 			crawlController.startCrawler(urlList);
-			List<ContentRecord> resultsList  = cci.search(searchTerm);
+			List<ContentRecord> resultsList  = IndexResultsRetrieverUtil.search(indexHolder.getDirectory(), indexHolder.getAnalyzer(), searchTerm, 100);
 			
 			LOGGER.debug("finding similar pages for the resultpages of search term '" + searchTerm + "' " + " results for " + searchTerm + " = " + resultsList.size());
 			
 			for (ContentRecord cr : resultsList)
 			{
 				LOGGER.debug("find similar pages for:" + cr.getUrl());
-				List<ContentRecord> similarResultsList = cci.likeThis(cr.getUrl(),1000);
+				List<ContentRecord> similarResultsList = IndexResultsRetrieverUtil.likeThis(indexHolder.getDirectory(), indexHolder.getAnalyzer(),cr.getUrl(),1000);
 				for (ContentRecord scr : similarResultsList)
 				{
 					LOGGER.debug("similar: " + scr.getUrl() + " / " + scr.getTitle());
