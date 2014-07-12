@@ -47,6 +47,7 @@ public class UBSearchServlet extends HttpServlet {
 	Integer numResults;
 	
 	IndexHolder indexHolder;
+	static Thread t; 
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -67,7 +68,7 @@ public class UBSearchServlet extends HttpServlet {
 	{
 
 		Reindexer reindexer = new Reindexer(this);
-		Thread t = new Thread(reindexer);
+		 t = new Thread(reindexer);
 		t.start();
 		
 //		if (!isReindexing)
@@ -132,6 +133,8 @@ public class UBSearchServlet extends HttpServlet {
 		{
 			try {
 				appConfig = new Config("/WEB-INF/config.properties", getServletContext());
+				numResults = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS);
+
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -223,6 +226,8 @@ public class UBSearchServlet extends HttpServlet {
 			JsonArray resultsFor = new JsonArray();
 			try {
 				//List<ContentRecord> crSimList = CrawlContentIndexer.getInstance().likeThis(similarUrlString, numResults);
+				LOGGER.debug("indexHolder:" + indexHolder);
+				LOGGER.debug("numResults:" + numResults);
 				List<ContentRecord> crSimList = IndexResultsRetrieverUtil.likeThis(indexHolder.getDirectory(),indexHolder.getAnalyzer(),   similarUrlString,numResults);
 
 				for (ContentRecord crsim : crSimList)
@@ -244,6 +249,9 @@ public class UBSearchServlet extends HttpServlet {
 			response.getWriter().write(callbackString + "(" + new Gson().toJson(similarPagesFor) + ");");
 			
 		}		
+		if (!isIndexCreated())
+		{ response.getWriter().write(callbackString + "(" + "{}" + ");");}
+		
 	}
 	@Override
 	public void service(ServletRequest request, ServletResponse response)
