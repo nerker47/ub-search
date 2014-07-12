@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import ch.ub.config.Config;
-import ch.ub.indexer.CrawlContentIndexer;
 
 public class SitemapParserTest {
 
