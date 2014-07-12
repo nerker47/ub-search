@@ -2,23 +2,45 @@ package ch.ub.crawler;
 
 import java.util.List;
 
-import ch.ub.indexer.CrawlContentIndexer;
+import ch.ub.indexer.IndexHolder;
+import ch.ub.util.IndexerUtil;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
+/**
+ * Must be singleton to provice acces to the current writer from the crwal instance 
+ * (which we do not have any control, since it is instanced from the crawl framework
+ * 
+ * @author Daniel
+ *
+ */
 
 public class BasicCrawlController {
 
 	private final String tmpDir;
+	private final IndexHolder indexHolder;
 	
-	public BasicCrawlController(String tmpDir) {
-		super();
+	private static BasicCrawlController currentInstance = null; 
+	
+	private BasicCrawlController(IndexHolder indexHolder, String tmpDir) {
 		this.tmpDir = tmpDir;
+		this.indexHolder = indexHolder;
 	}
 
+	public static BasicCrawlController getCurrentInstance()
+	{
+		return currentInstance;
+	}
+
+	public static BasicCrawlController createNewInstance(IndexHolder indexHolder, String tmpDir)
+	{
+		currentInstance = new BasicCrawlController(indexHolder, tmpDir);
+		return currentInstance;
+	}
+	
 	public void startCrawler(List<String> urlList) throws Exception {
 		/*
 		if (args.length != 2) {
@@ -93,7 +115,14 @@ public class BasicCrawlController {
 		controller.addSeed(url);
 		}
 
+		IndexerUtil.openIndexWriter(indexHolder);
 		controller.start(BasicCrawler.class, numberOfCrawlers);
-		CrawlContentIndexer.getInstance().setIsDoneWithIndexing();
+		IndexerUtil.closeIndexWriter(indexHolder);
 	}
+
+	public IndexHolder getIndexHolder() {
+		return indexHolder;
+	}
+	
+	
 }

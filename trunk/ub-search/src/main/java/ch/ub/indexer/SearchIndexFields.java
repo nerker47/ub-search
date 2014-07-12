@@ -14,7 +14,7 @@ public enum SearchIndexFields {
 	
 	;
 	
-	String fieldName;
+	public String fieldName;
 
 	private SearchIndexFields(String fieldName) {
 		this.fieldName = fieldName;
