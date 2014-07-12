@@ -61,13 +61,13 @@ public class UBSearchServlet extends HttpServlet {
 			{
 				if (isIndexCreated())
 				{
-				long currentLastModifiedDate = LastModifiedCheckUtil.getLastModified(siteMapUrl);
-				LOGGER.debug("checking lastmodified of sitemap, " + "current known: " + currentLastModifiedDate + ", last mod of sitemap on server: " + sitemapLastModified);
-				if (currentLastModifiedDate>sitemapLastModified)
+				long serverSitemapLastModifiedDate = LastModifiedCheckUtil.getLastModified(siteMapUrl);
+				LOGGER.debug("checking lastmodified of sitemap, " + " on server known: " + serverSitemapLastModifiedDate + ", local : " + sitemapLastModified);
+				if (serverSitemapLastModifiedDate>sitemapLastModified)
 				{
 					LOGGER.debug("sitemap lastmodified changed, going to reindex");
 					createIndex();
-					currentLastModifiedDate = sitemapLastModified;
+					sitemapLastModified = serverSitemapLastModifiedDate;
 				}
 				}
 				try {
