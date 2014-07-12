@@ -23,7 +23,8 @@ similar
 ========
 /ubsearch/ubsearch?similar=<path of page to which the results should be similar>
 example: 
-http://localhost:8080/ubsearch/ubsearch?similar=/archiv/ausgabe1/lx_6.html
+http://localhost:8080/ubsearch/ubsearch?similar=/politik/der_lange_marsch_der_le_pen_dynastie.html
+www.xn--untergrund-blttle-2qb.ch/ubsearch/ubsearch?similar=/politik/der_lange_marsch_der_le_pen_dynastie.html
 
 
 set number of results:
@@ -35,6 +36,10 @@ reindex
 ========
 http://localhost:8080/ubsearch/ubsearch?reindex=1
 
+
+force reindex
+==============
+http://localhost:8080/ubsearch/ubsearch?forcereindex=1
 
 enable AJP for this app: 
 
