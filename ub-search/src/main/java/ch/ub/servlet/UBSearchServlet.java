@@ -186,7 +186,12 @@ public class UBSearchServlet extends HttpServlet {
 		String reindexUrlString = request.getParameter("reindex");
 		String callbackString = request.getParameter("callback");
 		String resultsString = request.getParameter("results");
+		String forceReindexString = request.getParameter("forcereindex");
 		
+		if (forceReindexString!=null)
+		{
+			isReindexing=false;
+		}
 		if (resultsString!=null && isIndexCreated())
 		{
 			try {
