@@ -55,6 +55,8 @@ public class Reindexer implements Runnable {
 		
 //		BasicCrawlController crawlController = new BasicCrawlController(crawlerTmpDir);
 
+		numUrlsToFetch=20; 
+		
 			List<String> urlList = new ArrayList<String>();
 			try {
 				urlList = smParser.getSitemap();
@@ -78,6 +80,7 @@ public class Reindexer implements Runnable {
 			}
 			
 			searchServlet.setIndexHolder(newIndexHolder);
+			LOGGER.debug("newIndexHolder=" + newIndexHolder);
 			searchServlet.setReindexing(false);
 			searchServlet.setIndexCreated(true);
 		}
