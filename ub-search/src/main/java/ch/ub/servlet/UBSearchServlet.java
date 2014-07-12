@@ -144,7 +144,7 @@ public class UBSearchServlet extends HttpServlet {
 			//indexCreated=true; 
 			
 		}
-		response.setContentType("application/json;charset=utf-8");
+		response.setContentType("application/javascript;charset=utf-8");
 		 //response.setStatus(HttpServletResponse.SC_OK);
 		//baseRequest.setHandled(true);
 		String searchString = request.getParameter("search");

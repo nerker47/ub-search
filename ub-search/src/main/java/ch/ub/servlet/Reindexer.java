@@ -55,7 +55,7 @@ public class Reindexer implements Runnable {
 		
 //		BasicCrawlController crawlController = new BasicCrawlController(crawlerTmpDir);
 
-		numUrlsToFetch=20; 
+		//numUrlsToFetch=20; 
 		
 			List<String> urlList = new ArrayList<String>();
 			try {
