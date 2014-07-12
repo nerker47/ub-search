@@ -122,7 +122,7 @@ public class CrawlContentIndexer {
 		doc.add(new Field("content", content, Field.Store.YES, Field.Index.ANALYZED)); // adding content field
 		String keywords = contentRecord.getMetaKeywords();
 		Field keywordsField = new Field("keywords", keywords, Field.Store.YES, Field.Index.ANALYZED);
-		keywordsField.setBoost(1.5f);
+		keywordsField.setBoost(1.4f);
 		doc.add(keywordsField); // adding content field
 		String description = contentRecord.getMetaDescription();
 		Field descriptionField = new Field("description", description, Field.Store.YES, Field.Index.ANALYZED);
