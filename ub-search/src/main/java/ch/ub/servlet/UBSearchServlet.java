@@ -30,6 +30,7 @@ import ch.ub.indexer.ContentRecord;
 import ch.ub.indexer.ContentRecordSerializer;
 import ch.ub.indexer.IndexHolder;
 import ch.ub.util.IndexResultsRetrieverUtil;
+import ch.ub.util.LastModifiedCheckUtil;
 
 public class UBSearchServlet extends HttpServlet {
 
@@ -43,23 +44,53 @@ public class UBSearchServlet extends HttpServlet {
 	private final static Logger LOGGER = Logger.getLogger(UBSearchServlet.class.getName()); 
 	
 	private static Config appConfig; 
+	private static String siteMapUrl; 
 	private boolean  indexCreated = false; 
 	Integer numResults;
 	
 	IndexHolder indexHolder;
-	static Thread t; 
+	static Thread indexUpdaterThread; 
+	static Thread sitemapLastModifiedCheckerThread; 
 	
+	Long sitemapLastModified = 0l;
+	
+	Runnable siteMapUpdateChecker = new Runnable() {
+		
+		public void run() {
+			while (true)
+			{
+				if (isIndexCreated())
+				{
+				long currentLastModifiedDate = LastModifiedCheckUtil.getLastModified(siteMapUrl);
+				LOGGER.debug("checking lastmodified of sitemap, " + "current known: " + currentLastModifiedDate + ", last mod of sitemap on server: " + sitemapLastModified);
+				if (currentLastModifiedDate>sitemapLastModified)
+				{
+					LOGGER.debug("sitemap lastmodified changed, going to reindex");
+					createIndex();
+					currentLastModifiedDate = sitemapLastModified;
+				}
+				}
+				try {
+					Thread.sleep(60000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+	};
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 
 		indexHolder = new IndexHolder();
 		
 		LOGGER.debug("init() called");
-		LOGGER.debug("init() called");
-		
-		 
 
 		super.init(config);
+		
+		sitemapLastModifiedCheckerThread = new Thread(siteMapUpdateChecker);
+		sitemapLastModifiedCheckerThread.start();
 	}
 
 
@@ -68,8 +99,8 @@ public class UBSearchServlet extends HttpServlet {
 	{
 
 		Reindexer reindexer = new Reindexer(this);
-		 t = new Thread(reindexer);
-		t.start();
+		 indexUpdaterThread = new Thread(reindexer);
+		indexUpdaterThread.start();
 		
 //		if (!isReindexing)
 //		{
@@ -134,12 +165,15 @@ public class UBSearchServlet extends HttpServlet {
 			try {
 				appConfig = new Config("/WEB-INF/config.properties", getServletContext());
 				numResults = appConfig.getInt(Config.CONFIG_PARAM_LIMIT_NUM_SIMILAR_RESULTS);
+				siteMapUrl = appConfig.get(Config.CONFIG_PARAM_SITEMAPURL);
 
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-				
+			
+			long currentLastModifiedDate = LastModifiedCheckUtil.getLastModified(siteMapUrl);
+			setSitemapLastModified(currentLastModifiedDate);
 			createIndex();
 			//indexCreated=true; 
 			
@@ -308,6 +342,19 @@ public class UBSearchServlet extends HttpServlet {
 		this.indexCreated = indexCreated;
 	}
 
+
+
+	public Long getSitemapLastModified() {
+		return sitemapLastModified;
+	}
+
+
+
+	public void setSitemapLastModified(Long sitemapLastModified) {
+		this.sitemapLastModified = sitemapLastModified;
+	}
+
+	
 	
 	
 }

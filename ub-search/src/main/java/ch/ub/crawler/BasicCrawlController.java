@@ -4,6 +4,7 @@ import java.util.List;
 
 import ch.ub.indexer.IndexHolder;
 import ch.ub.util.IndexerUtil;
+import ch.ub.util.LastModifiedCheckUtil;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -42,6 +43,7 @@ public class BasicCrawlController {
 	}
 	
 	public void startCrawler(List<String> urlList) throws Exception {
+		
 		/*
 		if (args.length != 2) {
 			System.out.println("Needed parameters: ");
