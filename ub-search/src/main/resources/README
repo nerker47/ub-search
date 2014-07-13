@@ -1,3 +1,7 @@
+Google Source Code:
+
+https://code.google.com/p/ub-search
+
 
 # creates war
 mvn clean compile war:war
@@ -8,7 +12,7 @@ mvn jetty:run
 
 
 
-on the server where the servlet is running, the foollowing requests shoudl return some results: 
+on the server where the servlet is running, the following requests should return some results: 
 
 search
 =======
@@ -24,6 +28,7 @@ similar
 /ubsearch/ubsearch?similar=<path of page to which the results should be similar>
 example: 
 http://localhost:8080/ubsearch/ubsearch?similar=/politik/der_lange_marsch_der_le_pen_dynastie.html
+http://192.168.0.22:8080/ubsearch/ubsearch?similar=/politik/der_lange_marsch_der_le_pen_dynastie.html
 www.xn--untergrund-blttle-2qb.ch/ubsearch/ubsearch?similar=/politik/der_lange_marsch_der_le_pen_dynastie.html
 
 
